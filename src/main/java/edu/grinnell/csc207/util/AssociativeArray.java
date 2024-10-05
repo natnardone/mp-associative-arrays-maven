@@ -10,7 +10,7 @@ import static java.lang.reflect.Array.newInstance;
  * @param <K> the key type
  * @param <V> the value type
  *
- * @author Your Name Here
+ * @author Natalie Nardone
  * @author Samuel A. Rebelsky
  */
 public class AssociativeArray<K, V> {
@@ -91,7 +91,22 @@ public class AssociativeArray<K, V> {
    *   If the client provides a null key.
    */
   public void set(K key, V value) throws NullKeyException {
-    // STUB
+    int i;
+    // if the key already exists
+    try {
+      i = find(key);
+    } catch (Exception e) {
+      // key does not already exist
+      try {
+        i = find(null);
+      } catch (Exception f) {
+        // no null keys and key does not exist --> array is full
+        expand();
+        i = size;
+      }
+    }
+    pairs[i].key = key;
+    pairs[i].val = value;
   } // set(K,V)
 
   /**
@@ -107,7 +122,13 @@ public class AssociativeArray<K, V> {
    *   when the key is null or does not appear in the associative array.
    */
   public V get(K key) throws KeyNotFoundException {
-    return null; // STUB
+    int i;
+    try {
+      i = find(key);
+      return pairs[i].val;
+    } catch (Exception e) {
+      throw new KeyNotFoundException();
+    }
   } // get(K)
 
   /**
@@ -120,7 +141,12 @@ public class AssociativeArray<K, V> {
    * @return true if the key appears and false otherwise.
    */
   public boolean hasKey(K key) {
-    return false; // STUB
+    try {
+      find(key);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   } // hasKey(K)
 
   /**
@@ -169,7 +195,12 @@ public class AssociativeArray<K, V> {
    *   If the key does not appear in the associative array.
    */
   int find(K key) throws KeyNotFoundException {
-    throw new KeyNotFoundException();   // STUB
+    for (int i = 0; i < this.size; i++) {
+      if (pairs[i].key.equals(key)) {
+        return i;
+      } // if
+    } // for
+    throw new KeyNotFoundException();
   } // find(K)
 
 } // class AssociativeArray
