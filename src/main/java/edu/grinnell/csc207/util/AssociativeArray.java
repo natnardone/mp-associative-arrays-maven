@@ -103,8 +103,8 @@ public class AssociativeArray<K, V> {
         // no null keys and key does not exist --> array is full
         expand();
         i = size;
-      }
-    }
+      } // try-catch
+    } // try-catch
     pairs[i].key = key;
     pairs[i].val = value;
   } // set(K,V)
@@ -122,13 +122,12 @@ public class AssociativeArray<K, V> {
    *   when the key is null or does not appear in the associative array.
    */
   public V get(K key) throws KeyNotFoundException {
-    int i;
     try {
-      i = find(key);
+      int i = find(key);
       return pairs[i].val;
     } catch (Exception e) {
       throw new KeyNotFoundException();
-    }
+    } // try-catch
   } // get(K)
 
   /**
@@ -146,7 +145,7 @@ public class AssociativeArray<K, V> {
       return true;
     } catch (Exception e) {
       return false;
-    }
+    } // try-catch
   } // hasKey(K)
 
   /**
@@ -158,7 +157,17 @@ public class AssociativeArray<K, V> {
    *   The key to remove.
    */
   public void remove(K key) {
-    // STUB
+    try {
+      int i = find(key);
+      if (i == (size-1)) {
+        pairs[i] = new KVPair<>();
+      } else {
+        pairs[i] = pairs[size-1].clone();
+        pairs[size-1] = new KVPair<>();
+      } // if-else
+    } catch (Exception e) {
+      return;
+    } // try-catch
   } // remove(K)
 
   /**
