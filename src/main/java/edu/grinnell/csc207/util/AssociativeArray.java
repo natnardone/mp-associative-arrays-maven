@@ -64,7 +64,7 @@ public class AssociativeArray<K, V> {
   public AssociativeArray<K, V> clone() {
     AssociativeArray<K, V> arr = new AssociativeArray<K, V>();
     arr.size = this.size;
-    while (arr.size > DEFAULT_CAPACITY) {
+    while (arr.size > arr.pairs.length) {
       arr.expand();
     } // while
     for (int i = 0; i < arr.size; i++) {
@@ -112,23 +112,32 @@ public class AssociativeArray<K, V> {
    *   If the client provides a null key.
    */
   public void set(K key, V value) throws NullKeyException {
+    if (key == null) {
+      throw new NullKeyException();
+    } // if
     int i;
-    // if the key already exists
     try {
+      // if the key already exists
       i = find(key);
+      pairs[i] = new KVPair<>(key, value);
     } catch (Exception e) {
       // key does not already exist
-      try {
-        i = find(null);
-      } catch (Exception f) {
-        // no null keys and key does not exist --> array is full
+      if (size == this.pairs.length) {
         expand();
         i = size;
-      } // try-catch
+        pairs[i] = new KVPair<>(key, value);
+        size++;
+      } else {
+        for (int k = 0; k < this.pairs.length; k++) {
+          if (pairs[k] == null) {
+            i = k;
+            pairs[i] = new KVPair<>(key, value);
+            size++;
+            break;
+          } // if
+        } // for
+      } // if-else
     } // try-catch
-    pairs[i].key = key;
-    pairs[i].val = value;
-    size++;
   } // set(K,V)
 
   /**
@@ -144,6 +153,9 @@ public class AssociativeArray<K, V> {
    *   when the key is null or does not appear in the associative array.
    */
   public V get(K key) throws KeyNotFoundException {
+    if (key == null) {
+      throw new KeyNotFoundException();
+    } // if
     try {
       int i = find(key);
       return pairs[i].val;
@@ -181,11 +193,11 @@ public class AssociativeArray<K, V> {
   public void remove(K key) {
     try {
       int i = find(key);
-      if (i == (size-1)) {
-        pairs[i] = new KVPair<>();
+      if (i == (this.size - 1)) {
+        pairs[i] = null;
       } else {
-        pairs[i] = pairs[size-1].clone();
-        pairs[size-1] = new KVPair<>();
+        pairs[i] = pairs[size - 1].clone();
+        pairs[size - 1] = null;
       } // if-else
       size--;
     } catch (Exception e) {
