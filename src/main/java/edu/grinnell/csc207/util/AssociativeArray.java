@@ -62,7 +62,15 @@ public class AssociativeArray<K, V> {
    * @return a new copy of the array
    */
   public AssociativeArray<K, V> clone() {
-    return null; // STUB
+    AssociativeArray<K, V> arr = new AssociativeArray<K, V>();
+    arr.size = this.size;
+    while (arr.size > DEFAULT_CAPACITY) {
+      arr.expand();
+    } // while
+    for (int i = 0; i < arr.size; i++) {
+      arr.pairs[i] = this.pairs[i].clone();
+    } // for
+    return arr;
   } // clone()
 
   /**
@@ -71,7 +79,20 @@ public class AssociativeArray<K, V> {
    * @return a string of the form "{Key0:Value0, Key1:Value1, ... KeyN:ValueN}"
    */
   public String toString() {
-    return "{}"; // STUB
+    if (size == 0) {
+      return "{}";
+    } else {
+      String str = "{";
+      for (int i = 0; i < size; i++) {
+        if (i == 0) {
+          str = str.concat(pairs[i].key + ":" + pairs[i].val);
+        } else {
+          str = str.concat(", " + pairs[i].key + ":" + pairs[i].val);
+        } // if-else
+      } // for
+      str = str.concat("}");
+      return str;
+    } // if-else
   } // toString()
 
   // +----------------+----------------------------------------------
@@ -107,6 +128,7 @@ public class AssociativeArray<K, V> {
     } // try-catch
     pairs[i].key = key;
     pairs[i].val = value;
+    size++;
   } // set(K,V)
 
   /**
@@ -165,6 +187,7 @@ public class AssociativeArray<K, V> {
         pairs[i] = pairs[size-1].clone();
         pairs[size-1] = new KVPair<>();
       } // if-else
+      size--;
     } catch (Exception e) {
       return;
     } // try-catch
@@ -204,7 +227,7 @@ public class AssociativeArray<K, V> {
    *   If the key does not appear in the associative array.
    */
   int find(K key) throws KeyNotFoundException {
-    for (int i = 0; i < this.size; i++) {
+    for (int i = 0; i < size; i++) {
       if (pairs[i].key.equals(key)) {
         return i;
       } // if
