@@ -4,7 +4,7 @@ Associative Arrays
 A CSC-207 project on associative arrays.
 
 **Author**
-* Natalie Nardone
+Natalie Nardone
 
 CSC-207-01
 
